@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 function FormTodo(props) {
 
+    const { tasks, setTasks } = props;
     const initialTask = { id: 0, title: '', completed: false };
     const [task, setTask] = useState(initialTask);
     const [characters, setCharacters] = useState(0);
+    const input_element = useRef(null);
+
+    useEffect(() => {
+        if (task) {
+            input_element.current.focus();
+        }
+    });
 
     function handleChange(e) {
         setTask({
@@ -13,15 +21,13 @@ function FormTodo(props) {
             completed: false,
         });
         setCharacters(parseInt(e.target.value.length));
-    }
+    };
 
     function handleSubmit(e) {
         e.preventDefault();
 
-        const { saveTask } = props;
-
         if (task.title.length > 0 && task.title.length < 76) {
-            saveTask(task);
+            setTasks([task, ...tasks]);
         };
 
         setTask(initialTask);
@@ -36,7 +42,7 @@ function FormTodo(props) {
                 {characters} characters
             </p>
         )
-    }
+    };
 
     return (
         <>
@@ -47,6 +53,7 @@ function FormTodo(props) {
                     placeholder='e.g study for the tomorrow test'
                     value={task.title}
                     onChange={(e) => handleChange(e)}
+                    ref={input_element}
                 />
                 <button className='form-button'>+</button>
             </form>

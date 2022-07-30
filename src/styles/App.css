@@ -105,8 +105,7 @@ main {
     height: 100%;
 }
 
-.task-icons-check-container,
-.task-icons-trash-container {
+.task-icons button {
     padding: 30px 10px;
     color: white;
     outline: 0;
@@ -114,8 +113,13 @@ main {
     cursor: pointer;
 }
 
+
 .task-icons-check-container {
     background-color: #4CBB17;
+}
+
+.task-icons-pen-container {
+    background-color: rgb(206, 203, 34);
 }
 
 .task-icons-trash-container {

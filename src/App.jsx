@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import FormTodo from "./components/FormTodo";
+import FormEditTodo from "./components/FormEditTodo";
 import Task from './components/Task';
 import Footer from './components/Footer';
 
@@ -9,36 +10,26 @@ import './styles/App.css';
 function App() {
     const [tasks, setTasks] = useState([]);
     const [completedTasks, setCompletedTasks] = useState(0);
+    // To conditional rendering
+    const [isEditing, setIsEditing] = useState(false);
+    const [currentTask, setCurrentTask] = useState({});
 
-    function countCompletedTasks(list) {
-        let counter = 0;
-        list.forEach(task => {
-            if (task.completed) {
-                counter++;
-            };
-        });
-        setCompletedTasks(counter);
-    }
+    useEffect(() => {
+        function countCompletedTasks() {
+            let counter = 0;
+            tasks.forEach(task => {
+                if (task.completed) {
+                    counter++;
+                };
+            });
+            setCompletedTasks(counter);
+        }
+        countCompletedTasks();
+    }, [tasks])
 
-    function saveTask(new_task) {
-        setTasks([new_task, ...tasks]);
-    }
-
-    function removeTask(task_id) {
-        const updatedTasks = tasks.filter(task => task.id !== task_id);
-        countCompletedTasks(updatedTasks);
-        setTasks([...updatedTasks]);
-    }
-
-    function completeTask(task_id) {
-        tasks.forEach(task => {
-            if (task.id === task_id) {
-                task.completed = !task.completed;
-            }
-        });
-
-        setTasks([...tasks]);
-        countCompletedTasks(tasks);
+    function updateTask(task) {
+        setCurrentTask({ ...task });
+        setIsEditing(true);
     }
 
     // if there is no completed tasks, the counter will not be displayed.
@@ -56,9 +47,13 @@ function App() {
                     </div>
                     <div className="todo-list-container">
                         <h5 className="title-form">What's your plan for today?</h5>
-                        <FormTodo saveTask={saveTask} />
+                        {isEditing ? (
+                            <FormEditTodo currentTask={currentTask} setCurrentTask={setCurrentTask} tasks={tasks} setTasks={setTasks} setIsEditing={setIsEditing} />
+                        ) : (
+                            <FormTodo tasks={tasks} setTasks={setTasks} />
+                        )}
                         {tasks.map(task => (
-                            <Task key={task.id} task={task} removeTask={removeTask} completeTask={completeTask} />
+                            <Task key={task.id} task={task} tasks={tasks} setTasks={setTasks} updateTask={updateTask} />
                         ))}
                     </div>
                     {element}
